@@ -148,6 +148,7 @@ const resolvers = {
   
   Mutation: {
     addBook: (root, args) => {
+console.log('addBook, args', args)      
      const author = authors.find(a=> a.name === args.name)
       if(!author) {
         newAuthor = { name: args.author, id: uuid() }
