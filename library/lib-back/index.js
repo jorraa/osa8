@@ -159,6 +159,8 @@ console.log('addBook, args', args)
       return book
     },
     editAuthor: (root, args) => {
+console.log('editAUthor,args', args)      
+      try{
       const author = authors.find(a=> a.name === args.name)
       if(!author) {
         return null
@@ -166,6 +168,9 @@ console.log('addBook, args', args)
       const updatedAuthor = { ...author, born: args.setBornTo}
       authors = authors.filter(a => a.id !== author.id).concat(updatedAuthor)
       return updatedAuthor
+    }catch(error) {
+      console.log('error', error)
+    }
     }
   },
   Author: {
