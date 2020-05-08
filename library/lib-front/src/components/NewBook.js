@@ -11,15 +11,16 @@ const NewBook = ( {show }, { setError }) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-
-  const [ createBook ] = useMutation(CREATE_BOOK, {
+console.log('setError', setError)
+  const [ createBook ] = useMutation(CREATE_BOOK)
+  /*, {
     refetchQueries: [  
       {query: ALL_BOOKS},
       {query: ALL_AUTHORS} ],
     onError: (error) => {
       setError(error.graphQLErrors[0].message)
     }
-  })
+  })*/
 
   if (!show) {
     return null
