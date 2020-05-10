@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { ALL_BOOKS } from '../queries.js'
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS)
+  const [genreFilter, setGenreFilter] = useState('')
+
+  const result = useQuery(ALL_BOOKS, { 
+    variables: {genre: "oma"} })
   if (result.loading)  {
     return <div>loading...</div>
   }
@@ -16,6 +19,13 @@ const Books = (props) => {
   return (
     <div>
       <h2>Books</h2>
+      <div>
+          genre filter
+          <input
+            value={genreFilter}
+            onChange={({ target }) => setGenreFilter(target.value)}
+          />
+        </div>
       <table>
         <tbody>
           <tr>

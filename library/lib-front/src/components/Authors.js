@@ -15,7 +15,7 @@ const Authors = (props) => {
       setError(error.graphQLErrors[0].message)
     }
   })
-
+  
   useEffect(() => {
     if (editResult.data && !editResult.data.editAuthor) {
       setError('Author not found')
@@ -26,6 +26,7 @@ const Authors = (props) => {
   if (result.loading)  {
     return <div>loading...</div>
   }
+console.log('result', result)  
   const authors =result.data.allAuthors
 
   const EditAuthorForm = ( { setError } ) => {

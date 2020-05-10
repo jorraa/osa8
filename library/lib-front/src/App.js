@@ -13,7 +13,7 @@ const App = () => {
       setErrorMessage(null)
     }, 5000)
   }
-
+console.log('App, notify', notify)
   return (
     <div>
       <div>
@@ -27,7 +27,7 @@ const App = () => {
       />
 
       <Books
-        show={page === 'books'}
+        show={page === 'books'} setError={ notify }
       />
 
       <NewBook
