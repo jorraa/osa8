@@ -5,20 +5,32 @@ import { FIND_GENRE_BOOKS } from '../queries.js'
 
 const Books = (props) => {
   const [genre, setGenre] = useState('')
+  const [genres, setGenres] = useState([])
 
-const result = useQuery(FIND_GENRE_BOOKS, {
+
+  const result = useQuery(FIND_GENRE_BOOKS, {
     variables: { genreToSearch: genre },
   });
-  console.log('result', result)
+
   if (result.loading)  {
     return <div>loading...</div>
   }
   const books = result.data.allBooks
-
+  if(!genres.length) { // first time there are all books
+    let newGenres = []
+    books.forEach(b => {
+      b.genres.forEach(g => {
+        if(!newGenres.includes(g)) {
+          newGenres = newGenres.concat(g)
+        }
+      })
+    })
+    setGenres(newGenres)
+  }
   if (!props.show) {
     return null
   }
-
+  
   return (
     <div>
       <h2>Books</h2>
@@ -47,9 +59,9 @@ const result = useQuery(FIND_GENRE_BOOKS, {
         </tbody>
       </table>
       <div>
-        <button onClick={() => setGenre('fiction')}>fiction</button>
-        <button onClick={() => setGenre('oma')}>oma</button>
-        <button onClick={() => setGenre('muu')}>muu</button>
+        {genres.map( genre => 
+          <button key={genre} onClick = {() => setGenre( genre ) }> {genre}  </button>
+        )}
         <button onClick={() => setGenre('')}>all genres</button>
       </div>
     </div>

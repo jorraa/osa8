@@ -132,7 +132,6 @@ const typeDefs = gql`
     bookCount: Int!
     allBooks(genre: String): [Book!]!
 
-    allGenres: [String!]!
     me: User
   }
 
