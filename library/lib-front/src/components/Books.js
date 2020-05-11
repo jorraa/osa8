@@ -13,7 +13,6 @@ const result = useQuery(FIND_GENRE_BOOKS, {
   if (result.loading)  {
     return <div>loading...</div>
   }
-
   const books = result.data.allBooks
 
   if (!props.show) {
@@ -23,6 +22,10 @@ const result = useQuery(FIND_GENRE_BOOKS, {
   return (
     <div>
       <h2>Books</h2>
+      {genre
+        ?<div>in genre <b>{genre}</b></div> 
+        :''
+      }
       <table>
         <tbody>
           <tr>
@@ -43,6 +46,12 @@ const result = useQuery(FIND_GENRE_BOOKS, {
           )}
         </tbody>
       </table>
+      <div>
+        <button onClick={() => setGenre('fiction')}>fiction</button>
+        <button onClick={() => setGenre('oma')}>oma</button>
+        <button onClick={() => setGenre('muu')}>muu</button>
+        <button onClick={() => setGenre('')}>all genres</button>
+      </div>
     </div>
   )
 }
