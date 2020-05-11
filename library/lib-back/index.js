@@ -169,14 +169,17 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     allAuthors: async () => await Author.find({}),
-    findAuthor: (root, args) =>
-      Author.findOne({ name: args.name } ),
-
+    findAuthor: (root, args) => {
+    console.log('findAuthor, args', args)
+      return Author.findOne({ name: args.name } )
+    },
     bookCount: () => Book.collection.countDocuments(),
     allBooks: async (root, args) =>{
       console.log('allBooks, args', args)
       if(args.genre) {
-        return await Book.find({genres: {$in: [args.genre]}}).populate('author')
+        const books =  await Book.find({genres: {$in: [args.genre]}}).populate('author')
+        //console.log('books', books)
+        return books
       }
       return await Book.find({}).populate('author')
     },
@@ -188,7 +191,6 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
 console.log('addBook, args', args)
-console.log('me', currentUser)      
       if (!currentUser) {
         throw new AuthenticationError("not authenticated")
       }
