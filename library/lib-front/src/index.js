@@ -5,6 +5,7 @@ import App from './App'
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache} from '@apollo/client'
 import { setContext } from 'apollo-link-context'
 
+
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('library-user-token')
   return {
@@ -23,9 +24,8 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink)
 })
 
-
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <App/>
   </ApolloProvider>
 , document.getElementById('root'))

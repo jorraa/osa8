@@ -7,9 +7,12 @@ const Books = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
 
-
+  const genreNow = props.type === 'recommend' && props.user
+    ?props.user.favoriteGenre
+    :genre
+  
   const result = useQuery(FIND_GENRE_BOOKS, {
-    variables: { genreToSearch: genre },
+    variables: { genreToSearch: genreNow },
   });
 
   if (result.loading)  {
@@ -30,13 +33,24 @@ const Books = (props) => {
   if (!props.show) {
     return null
   }
-  
+
   return (
     <div>
-      <h2>Books</h2>
-      {genre
-        ?<div>in genre <b>{genre}</b></div> 
-        :''
+      {props.type === 'recommend'
+      ?<>
+        <h2>recommendations</h2>
+        {props.user.favoriteGenre
+          ?<div>books in your favourite genre <b>{props.user.favoriteGenre}</b></div> 
+          :''
+        }
+      </>
+      :<>
+        <h2>Books</h2>
+        {genre
+          ?<div>in genre <b>{genre}</b></div> 
+          :''
+        }
+      </>  
       }
       <table>
         <tbody>
@@ -59,10 +73,15 @@ const Books = (props) => {
         </tbody>
       </table>
       <div>
-        {genres.map( genre => 
-          <button key={genre} onClick = {() => setGenre( genre ) }> {genre}  </button>
-        )}
-        <button onClick={() => setGenre('')}>all genres</button>
+        {props.type === 'normal'
+          ? <> 
+              {genres.map( genre => 
+                <button key={genre} onClick = {() => setGenre( genre ) }> {genre}  </button>
+              )}
+              <button onClick={() => setGenre('')}>all genres</button>
+            </>
+          :''
+        }
       </div>
     </div>
   )

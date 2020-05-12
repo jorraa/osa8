@@ -1,16 +1,25 @@
-import React, { useState } from 'react'
-import { useApolloClient } from '@apollo/client'
+import React, { useState, useEffect } from 'react'
+import { useApolloClient, useQuery } from '@apollo/client'
+
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import { CURRENT_USER } from './queries.js'
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [booksType, setBooksType] = useState('normal')
   const [errorMessage, setErrorMessage] = useState(null)
-  const [token, setToken] = useState(null)
-  
+  const [user, setUser] = useState(null)
   const client = useApolloClient()
+
+  const result = useQuery(CURRENT_USER)
+  useEffect(() => {
+    if ( result.data ) {
+      setUser(result.data.currentUser)
+    }
+  }, [result.data]) // eslint-disable-line
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -20,7 +29,7 @@ const App = () => {
   }
 
   const logout = () => {
-    setToken(null)
+    setUser(null)
     localStorage.clear()
     client.resetStore()
   }
@@ -29,10 +38,18 @@ const App = () => {
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
-        {token
+        <button onClick={() => {
+            setPage('books')
+            setBooksType('normal')
+          }
+        }>books</button>
+        {user
           ?<span>
             <button onClick={() => setPage('add')}>add book</button>
+            <button onClick={() => {
+              setPage('books')
+              setBooksType('recommend')}
+            }>recommend</button>
             <button onClick={() => logout()}>logout</button>
           </span>
           :<button onClick={() => setPage('login')}>login</button>
@@ -44,18 +61,17 @@ const App = () => {
       />
 
       <Books
-        show={page === 'books'} setError={ notify }
+        show={page === 'books'} type={booksType} setError={ notify } user={user}
       />
-      {token?
-      <NewBook
+      {user
+      ?<NewBook
         show={page === 'add'} setError={ notify }
       />
       :<LoginForm 
         show={page === 'login'}
-        setToken={setToken}
+        setUser={setUser}
         setError={notify}/>
       }
-      
     </div>
   )
 

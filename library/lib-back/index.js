@@ -116,23 +116,27 @@ const typeDefs = gql`
   }
   type User {
     username: String!
-    favoriteGenre: String!
+    favoriteGenre: String
     id: ID!
   }
   
+
   type Token {
     value: String!
+    user: User!
   }
 
   type Query {
+    currentUser: User
+    allUsers: [User!]!
+    meee: User!
     authorCount: Int!
     allAuthors: [Author!]!
     findAuthor(name: String!): Author
 
     bookCount: Int!
     allBooks(genre: String): [Book!]!
-
-    me: User
+    findUser(token: String): User!
   }
 
   type Mutation {
@@ -167,10 +171,18 @@ const typeDefs = gql`
 const uuid = require('uuid/v1')
 const resolvers = {
   Query: {
+    meee: (root, args,  { currentUser} ) => {
+      console.log('in me, context.currentUser', currentUser)
+            return currentUser
+    },
+    currentUser: (root, args, { currentUser }) => {
+      return currentUser
+    },
+    allUsers: async () => await User.find({}) , 
     authorCount: () => Author.collection.countDocuments(),
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async (root, args) => await Author.find({}),
+    
     findAuthor: (root, args) => {
-    console.log('findAuthor, args', args)
       return Author.findOne({ name: args.name } )
     },
     bookCount: () => Book.collection.countDocuments(),
@@ -178,16 +190,14 @@ const resolvers = {
     allBooks: async (root, args) =>{
       console.log('allBooks, args', args)
       if(args.genre) {
+console.log('if args.genre', args.genre)        
         const books =  await Book.find({genres: {$in: [args.genre]}}).populate('author')
         //console.log('books', books)
         return books
       }
       return await Book.find({}).populate('author')
-    },
-
-    me: (root, args, context) => {
-      return context.currentUser
     }
+
   },
   
   Mutation: {
@@ -261,7 +271,7 @@ console.log('editAUthor,args', args)
         id: user._id,
       }
   
-      return { value: jwt.sign(userForToken, JWT_SECRET) }
+      return { value: jwt.sign(userForToken, JWT_SECRET), user: user }
     },
    
   },
@@ -285,7 +295,8 @@ const server = new ApolloServer({
         auth.substring(7), JWT_SECRET
       )
       const currentUser = await User
-        .findById(decodedToken.id).populate('friends')
+        .findById(decodedToken.id)
+//      currentUser:  currentUser
       return { currentUser }
     }
   }
