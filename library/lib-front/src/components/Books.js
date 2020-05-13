@@ -13,7 +13,7 @@ const Books = (props) => {
   
   const result = useQuery(FIND_GENRE_BOOKS, {
     variables: { genreToSearch: genreNow },
-  });
+  })
 
   if (result.loading)  {
     return <div>loading...</div>
