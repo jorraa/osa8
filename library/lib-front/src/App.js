@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useApolloClient, useQuery } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } 
+      from '@apollo/client'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
-import { CURRENT_USER } from './queries.js'
+import { CURRENT_USER, FIND_GENRE_BOOKS } from './queries.js'
+import { BOOK_ADDED } from './mutations.js'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -33,7 +35,28 @@ const App = () => {
     localStorage.clear()
     client.resetStore()
   }
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) => 
+      set.map(p => p.id).includes(object.id)  
 
+    const dataInStore = client.readQuery({ query: FIND_GENRE_BOOKS, 
+      variables: { genreToSearch: '' } })
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      client.writeQuery({
+        query: FIND_GENRE_BOOKS, 
+        variables: { genreToSearch: '' },
+        data: { allBooks : dataInStore.allBooks.concat(addedBook) }
+      })
+    }   
+  }
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      notify(`${addedBook.title} written by ${addedBook.author.name} added`)
+      updateCacheWith(addedBook)
+    }
+  })  
   return (
     <div>
       <div>
@@ -65,7 +88,7 @@ const App = () => {
       />
       {user
       ?<NewBook
-        show={page === 'add'} setError={ notify }
+        show={page === 'add'} setError={ notify } updateCa cheWith={ updateCacheWith}
       />
       :<LoginForm 
         show={page === 'login'}

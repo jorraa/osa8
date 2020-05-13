@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
 
 import { CREATE_BOOK } from '../mutations.js'
-import { ALL_AUTHORS, FIND_GENRE_BOOKS } from '../queries.js'
+import { ALL_AUTHORS } from '../queries.js'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -13,15 +13,15 @@ const NewBook = (props) => {
 
   const [ createBook ] = useMutation(CREATE_BOOK, {
     refetchQueries: [  
-      {query: ALL_AUTHORS},
-      //{query: ALL_BOOKS},
-      {query: FIND_GENRE_BOOKS, 
-        variables: { genreToSearch: '' },
-      }
+      {query: ALL_AUTHORS}
+     // {query: FIND_GENRE_BOOKS,
+     //   variables: { genreToSearch: '' },
+     // }
       ],
     onError: (error) => {
       props.setError(error.graphQLErrors[0].message)
-    } //update ei vaan onnistunut, joten refetchin kautta
+    }// NO NEED FOR UPDATE, WILL BE DONE LIKE BOOK ADDED BY ANYONE ELSE
+    
   })
 
   if (!props.show) {
