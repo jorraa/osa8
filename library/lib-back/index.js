@@ -115,8 +115,10 @@ const resolvers = {
     },
     allUsers: async () => await User.find({}) , 
     authorCount: () => Author.collection.countDocuments(),
-    allAuthors: async (root, args) => await Author.find({}),
-    
+    allAuthors: async (root, args) => {
+      console.log('allAuthors')
+       return await Author.find({})
+    },
     findAuthor: (root, args) => {
       return Author.findOne({ name: args.name } )
     },
@@ -225,6 +227,7 @@ console.log('editAUthor,args', args)
 
            
     bookCount:  async (root, args, context) => {
+      console.log('context', context)       
       const books = await context.loaders.bookLoader.load(root.id)
       return books.length
     }
@@ -235,16 +238,16 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
+    let currentUser = null
+    const loaders = { bookLoader: new DataLoader(keys => batchBooks(keys)) }
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
-      const currentUser = await User
-        .findById(decodedToken.id)
-      const loaders = { bookLoader: new DataLoader(keys => batchBooks(keys)) }  
-      return { currentUser , loaders }
+      currentUser = await User.findById(decodedToken.id)
     }
+    return { currentUser , loaders }
   }
 })
 

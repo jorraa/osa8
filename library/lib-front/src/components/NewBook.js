@@ -20,7 +20,7 @@ const NewBook = (props) => {
       ],
     onError: (error) => {
       props.setError(error.graphQLErrors[0].message)
-    }// NO NEED FOR UPDATE, WILL BE DONE LIKE BOOK ADDED BY ANYONE ELSE
+    }// NO NEED FOR UPDATE, WILL BE DONE BY subscription bookAdded
     
   })
 

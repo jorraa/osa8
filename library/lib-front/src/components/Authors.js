@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
 import { EDIT_AUTHOR } from '../mutations.js'
 
+
 const Authors = (props) => {
   const setError = props.setError
 
@@ -26,12 +27,12 @@ const Authors = (props) => {
   if (result.loading)  {
     return <div>loading...</div>
   }
-
   const authors =result.data.allAuthors
 
   const EditAuthorForm = ( { setError } ) => {
     const [born, setBorn] = useState('')
     const [name, setName] = useState('')
+
     const submitAuthor = async (event) => {
       event.preventDefault()
       const setBornTo = Number(born)
@@ -42,7 +43,7 @@ const Authors = (props) => {
       setName('')
       setBorn('')
     }
-
+  
     return (
       <div>
         <h2>Set birthyear</h2>
@@ -64,8 +65,7 @@ const Authors = (props) => {
         </form>
       </div>
     )
-}
-
+  }
 
   if (!props.show) {
     return null

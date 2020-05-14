@@ -44,6 +44,7 @@ export const LOGIN = gql`
       name 
       born
     }
+    genres
   }
 `
 export const BOOK_ADDED = gql`

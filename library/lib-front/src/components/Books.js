@@ -36,7 +36,7 @@ const Books = (props) => {
 
   return (
     <div>
-      {props.type === 'recommend'
+      {props.type === 'recommend' && props.user
       ?<>
         <h2>recommendations</h2>
         {props.user.favoriteGenre
@@ -68,6 +68,7 @@ const Books = (props) => {
               <td>{a.title}</td>
               <td>{a.author.name}</td>
               <td>{a.published}</td>
+              <td>{a.genres}</td>
             </tr>
           )}
         </tbody>

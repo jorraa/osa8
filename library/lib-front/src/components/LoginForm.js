@@ -16,7 +16,6 @@ const LoginForm = ({ show, setError, setUser }) => {
   useEffect(() => {
     if ( result.data ) {
       console.log('-->', result.data)
-      console.log('login', login)
       const token = result.data.login.value
       setUser(result.data.login.user)
       localStorage.setItem('library-user-token', token)
